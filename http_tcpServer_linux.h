@@ -7,23 +7,29 @@
 #include<stdlib.h>
 #include<string>
 
+using namespace std;
+
 namespace http {
     class TcpServer{
         public :
-            TcpServer(std::string ip_address, int port);
+            TcpServer(string ip_address, int port);
             ~TcpServer();
         private:
-            std::string m_ip_address;
+            string m_ip_address;
             int m_port;
             int m_socket;
             int m_new_socket;
             long m_incomingMessage;
             struct sockaddr_in m_socketAddress;
             unsigned int m_socketAdress_len;
-            std::string m_serverMessage;
+            string m_serverMessage;
 
             int startServer();
             void closeServer();
+            void acceptConnection(int &new_socket);
+            string buildResponse();
+            void sendResponse();
+
     };
 }
 #endif

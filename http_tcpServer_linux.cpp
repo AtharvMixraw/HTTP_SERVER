@@ -6,6 +6,9 @@
 using namespace std;
 
 namespace{
+
+    const int BUFFER_SIZE = 30720;
+
     void log(const string &message){
         cout<<message<<endl;
     }
@@ -21,7 +24,7 @@ namespace http
         : m_ip_address(ip_address), m_port(port), m_socket(),
           m_new_socket(), m_incomingMessage(), m_socketAddress(),
           m_socketAdress_len(sizeof(m_socketAddress),
-          m_serverMessage(buildResponse())
+          m_serverMessage(buildResponse());
         {
             startServer();
         }
