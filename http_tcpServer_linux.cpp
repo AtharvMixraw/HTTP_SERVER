@@ -67,6 +67,43 @@ namespace http
         if(listen(m_socket, 20) < 0){
             exitWithError("Socket listen failed");
         }
+
+        ostringstream ss;
+        ss<<"\n*** Listening on Address " << inet_ntoa(m_socketAddress.sin_addr) << "Port: " << ntohs(m_socketAddress.sin_port) << "***\n\n";
+        log(ss.str());
+
+        int bytesRecieved;
+
+        while(true)
+        {
+            log("=======wait for a new connection=======");
+            acceptConnection(m_new_connection); //accept new client connection and assigns the socket descriptor to m_new_socket
+
+            char buffer[BUFFER_SIZE] = {0};
+            bytesRecieved = read(m_new_socket, buffer, BUFFER_SIZE);
+
+            if(bytesRecieved<0){
+                exitWithError("Failed to read bytes from client socket connection");
+            }
+
+            ostringstream ss;
+            ss<< "---------- Recieved request from Client ----------\n\n";
+            log(ss.str());
+
+            sendResponse();
+
+            close(m_new_socket);
+        }
+    }
+
+    void TcpServer:: acceptConnection(int &new_socket){
+        new_socket = accept(m_socket, (sockaddr *)&m_socketAddress , &m_socketAdress_len);
+        if (new_socket < 0)
+        {
+            ostringstream ss;
+            ss << "Server failed to accept incoming connection from ADDRESS: " << inet_ntoa(m_socketAddress.sin_addr) << "; PORT: " << ntohs(m_socketAddress.sin_port);
+            exitWithError(ss.str());
+        }
     }
 
 } // namespace http
