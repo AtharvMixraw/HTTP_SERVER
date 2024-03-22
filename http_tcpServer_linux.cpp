@@ -1,4 +1,5 @@
-#include <http_tcpServer_linux.h>
+#include "http_tcpServer_linux.h"
+#include "server_linux.cpp"
 
 #include <iostream>
 #include <sstream>
@@ -20,7 +21,7 @@ namespace{
 
 namespace http
 {
-    TcpServer::TcpServer(std::string ip_address, int port) : m_ip_address(ip_address), m_port(port), m_socket(), m_new_socket(),
+    TcpServer::TcpServer(string ip_address, int port) : m_ip_address(ip_address), m_port(port), m_socket(), m_new_socket(),
                                                              m_incomingMessage(),
                                                              m_socketAddress(), m_socketAddress_len(sizeof(m_socketAddress)),
                                                              m_serverMessage(buildResponse())
@@ -31,7 +32,7 @@ namespace http
 
             if(startServer() != 0){
                 ostringstream ss;
-                 ss<< "Failed to start a server with PORT: " << ntons(m_socketAddress.sin_port);
+                 ss<< "Failed to start a server with PORT: " << ntohs(m_socketAddress.sin_port);
                  log(ss.str());
             }
 
@@ -77,7 +78,7 @@ namespace http
         while(true)
         {
             log("=======wait for a new connection=======");
-            acceptConnection(m_new_connection); //accept new client connection and assigns the socket descriptor to m_new_socket
+            acceptConnection(m_new_socket); //accept new client connection and assigns the socket descriptor to m_new_socket
 
             char buffer[BUFFER_SIZE] = {0};
             bytesRecieved = read(m_new_socket, buffer, BUFFER_SIZE);
@@ -97,12 +98,31 @@ namespace http
     }
 
     void TcpServer:: acceptConnection(int &new_socket){
-        new_socket = accept(m_socket, (sockaddr *)&m_socketAddress , &m_socketAdress_len);
+        new_socket = accept(m_socket, (sockaddr *)&m_socketAddress , &m_socketAddress_len);
         if (new_socket < 0)
         {
             ostringstream ss;
             ss << "Server failed to accept incoming connection from ADDRESS: " << inet_ntoa(m_socketAddress.sin_addr) << "; PORT: " << ntohs(m_socketAddress.sin_port);
             exitWithError(ss.str());
+        }
+    }
+
+    string TcpServer :: buildResponse(){
+        string htmlFile = "<!DOCKTYPE html><html lang=\"en\"><body><h1> HOME </h1><p> Hello from your Server :) </p></body></html>";
+        ostringstream ss;
+        ss<<"HTTP/1.1 200 OK\n Content-type: text/html\nContent-length: "<<htmlFile.size()<<"\n\n"<<htmlFile;
+        return ss.str();
+    }
+
+    void TcpServer :: sendResponse(){
+        long bytesSent;
+        bytesSent = write(m_new_socket, m_serverMessage.c_str(), m_serverMessage.size());
+
+        if(bytesSent == m_serverMessage.size()){
+            log("----- Server Response sent to client -----\n\n");
+        }
+        else{
+            log("Error");
         }
     }
 

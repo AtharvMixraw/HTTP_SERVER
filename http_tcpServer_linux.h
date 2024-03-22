@@ -14,6 +14,7 @@ namespace http {
         public :
             TcpServer(string ip_address, int port);
             ~TcpServer();
+            void startListen();
         private:
             string m_ip_address;
             int m_port;
@@ -21,7 +22,7 @@ namespace http {
             int m_new_socket;
             long m_incomingMessage;
             struct sockaddr_in m_socketAddress;
-            unsigned int m_socketAdress_len;
+            unsigned int m_socketAddress_len;
             string m_serverMessage;
 
             int startServer();
