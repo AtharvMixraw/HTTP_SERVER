@@ -1,7 +1,3 @@
-Here's a README file for your HTTP server project named Ironnet:
-
----
-
 # Ironnet - Simple HTTP Server
 
 Ironnet is a simple HTTP server implementation written in C++ for Linux systems. It allows you to serve basic web pages and handle HTTP requests.
@@ -54,10 +50,4 @@ int main() {
 
 Contributions to Ironnet are welcome! If you find any bugs or have suggestions for improvements, please open an issue or submit a pull request on the GitHub repository.
 
-## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize the README according to your project's specific features, usage instructions, and licensing terms. Let me know if you need further assistance!
